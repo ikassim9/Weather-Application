@@ -7,4 +7,12 @@
     <string name="high_temp">High 80&#xb0;</string>
     <string name="humidity">Humidity 100%</string>
     <string name="pressure">Pressure 1023 hPa</string>
+    <string name="forecast">Forcast</string>
+    <string name="forecast_date">Jan 2</string>
+    <string name="forecast_temp">temp</string>
+    <string name="forecast_high">high</string>
+    <string name="forecast_low_temp">low</string>
+    <string name="forecast_sunrise">sunrise</string>
+    <string name="forecast_sunset">sunset</string>
+    <string name="degree_temp">%d°</string>
 </resources>
