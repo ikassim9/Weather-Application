@@ -1,60 +1,64 @@
 package com.ismail.myweatherapplication.ui
 
-import androidx.compose.foundation.Image
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.ismail.myweatherapplication.R
-import com.ismail.myweatherapplication.model.DayForecast
-import com.ismail.myweatherapplication.model.ForecastTemp
+import com.ismail.myweatherapplication.model.ForecastData
 import com.ismail.myweatherapplication.util.toHourMinute
 import com.ismail.myweatherapplication.util.toMonthDay
 
-const val startDay = 1666474687L
-const val sunRise = 24444222L
-const val sunSet = 24444222L
 
-val forecastData = (0 until 16).map {
-    DayForecast(
-        date = startDay * (it * (24 * 68 * 68)),
-        sunrise = sunRise * (it * (24 * 68 * 68)),
-        sunset = sunSet * (it * (24 * 63 * 68)),
-        temp = ForecastTemp(
-            min = 60F + it,
-            max = 78F + it
-        ),
-        humidity = 100,
-        pressure = 62F
-    )
-}
-
-
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ForecastScreen() {
+fun ForecastScreen(
+    viewModel: ForecastViewModel = hiltViewModel(),
+) {
 
-    LazyColumn {
-        items(items = forecastData) { item: DayForecast ->
-            ForecastItem(item = item)
+    val state by viewModel.forecastConditions.collectAsState(null)
 
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchData()
+    }
+    Scaffold(
+        topBar = { AppBar(title = stringResource(id = R.string.app_name))},
+    ) {
+        state?.let {
+            it
+            LazyColumn {
+                items(items = it.forecastData) { item: ForecastData ->
+                    ForecastItem(item = item)
+
+                }
+            }
         }
     }
+
 }
 
 
 @Composable
 
-fun ForecastItem(item: DayForecast) {
+fun ForecastItem(item: ForecastData) {
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -62,7 +66,17 @@ fun ForecastItem(item: DayForecast) {
     ) {
         val textStyle = TextStyle(fontSize = 12.sp)
 
-        Image(painter = painterResource(id = R.drawable.sun_icon), contentDescription = "")
+        val iconUrl = String.format(
+            "https://openweathermap.org/img/wn/10d@2x.png",
+            item.weatherData.firstOrNull()?.iconName
+        )
+
+        AsyncImage(
+            model = iconUrl,
+            contentDescription = "Sunny",
+            modifier = Modifier.size(72.dp),
+            contentScale = ContentScale.Fit
+        )
         Spacer(modifier = Modifier.weight(1f, true))
         Text(text = item.date.toMonthDay(), style = TextStyle(fontSize = 16.sp))
 
@@ -70,7 +84,10 @@ fun ForecastItem(item: DayForecast) {
 
 
         Column {
-            Text(text = stringResource(id = R.string.current_temp, item.temp.min.toInt() + 2), style = textStyle)
+            Text(
+                text = stringResource(id = R.string.current_temp, item.temp.min.toInt()),
+                style = textStyle
+            )
             Row {
                 Text(
                     text = stringResource(id = R.string.high_temp, item.temp.max.toInt()),

@@ -4,11 +4,10 @@
     <string name="feels_like_temp">Feels like %d°</string>
     <string name="low_temp">Low: %d°</string>
     <string name="high_temp">High: %d°</string>
-    <string name="degree_symbol">%d°</string>
     <string name="humidity">Humidity: %d%%</string>
     <string name="pressure">Pressure: %d hPa</string>
     <string name="sun_rise">SunRise: %s</string>
     <string name="sun_set">Sunset: %s</string>
     <string name="current_temp">Temp: %d</string>
-
+    <string name="temperature">%s°</string>
 </resources>
