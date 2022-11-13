@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ismail.myweatherapplication.model.CurrentConditions
-import com.ismail.myweatherapplication.ui.CurrentConditionsContent
 import com.ismail.myweatherapplication.ui.CurrentConditionsScreen
 import com.ismail.myweatherapplication.ui.ForecastScreen
 import dagger.hilt.android.AndroidEntryPoint
