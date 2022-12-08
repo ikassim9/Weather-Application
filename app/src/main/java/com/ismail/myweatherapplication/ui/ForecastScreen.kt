@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.ismail.myweatherapplication.R
 import com.ismail.myweatherapplication.model.ForecastData
+import com.ismail.myweatherapplication.model.LatitudeLongitude
 import com.ismail.myweatherapplication.util.toHourMinute
 import com.ismail.myweatherapplication.util.toMonthDay
 
@@ -30,17 +31,24 @@ import com.ismail.myweatherapplication.util.toMonthDay
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ForecastScreen(
+    latitudeLongitude: LatitudeLongitude,
     viewModel: ForecastViewModel = hiltViewModel(),
 ) {
 
     val state by viewModel.forecastConditions.collectAsState(null)
 
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchData()
+    if (latitudeLongitude !== null) {
+        LaunchedEffect(Unit) {
+            viewModel.fetchDataByLocation(latitudeLongitude)
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            viewModel.fetchData()
+        }
     }
+
     Scaffold(
-        topBar = { AppBar(title = stringResource(id = R.string.app_name))},
+        topBar = { AppBar(title = stringResource(id = R.string.app_name)) },
     ) {
         state?.let {
             it
@@ -137,7 +145,6 @@ fun ForecastItem(item: ForecastData) {
 @Composable
 fun ForestScreenPreview() {
 
-    ForecastScreen()
 }
 
 

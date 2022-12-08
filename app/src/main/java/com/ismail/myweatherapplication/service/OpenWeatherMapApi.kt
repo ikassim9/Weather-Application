@@ -23,4 +23,23 @@ interface OpenWeatherMapApi {
         @Query("units") units : String = "imperial",
         @Query("cnt") count: Int = 16
     ): ForecastConditions
+
+
+    @GET("data/2.5/forecast/daily")
+    suspend fun getForecastConditionsByLocation(
+        @Query("lat") latitude: Float,
+        @Query("long") longitude: Float,
+        @Query("appid") apiKey: String = "faf2d0bbb6523eae491334ef72baf27b",
+        @Query("units") units : String = "imperial",
+        @Query("cnt") count: Int = 16
+    ): ForecastConditions
+
+
+    @GET("data/2.5/weather")
+    suspend fun getWeatherByLocation(
+        @Query("lat") latitude: Float,
+        @Query("long") longitude: Float,
+        @Query("appid") apiKey: String = "faf2d0bbb6523eae491334ef72baf27b",
+        @Query("units") units : String = "imperial"
+        ): CurrentConditions
 }
