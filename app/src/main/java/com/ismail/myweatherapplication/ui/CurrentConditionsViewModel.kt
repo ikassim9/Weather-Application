@@ -3,6 +3,7 @@ package com.ismail.myweatherapplication.ui
 
 import androidx.lifecycle.ViewModel
 import com.ismail.myweatherapplication.model.CurrentConditions
+import com.ismail.myweatherapplication.model.LatitudeLongitude
 import com.ismail.myweatherapplication.service.OpenWeatherMapApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,6 +21,11 @@ class CurrentConditionsViewModel @Inject constructor(private val api: OpenWeathe
 
     fun fetchData() = runBlocking {
         val currentConditions = api.getCurrentConditions("55421")
+        _currentConditions.trySend(currentConditions)
+    }
+
+    fun fetchDataByLocation(latitudeLongitude: LatitudeLongitude) = runBlocking {
+        val currentConditions = api.getWeatherByLocation(latitudeLongitude.latitude, latitudeLongitude.longitude)
         _currentConditions.trySend(currentConditions)
     }
 }

@@ -23,27 +23,37 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.ismail.myweatherapplication.R
 import com.ismail.myweatherapplication.model.CurrentConditions
+import com.ismail.myweatherapplication.model.LatitudeLongitude
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun CurrentConditionsScreen(
+    latitudeLongitude: LatitudeLongitude?,
     viewModel: CurrentConditionsViewModel = hiltViewModel(),
-    onForecastButtonClick: () -> Unit
-) {
+    onGetWeatherForMyLocationClick: () -> Unit,
+    onForecastButtonClick: () -> Unit,
+
+    ) {
 
     val state by viewModel.currentConditions.collectAsState(null)
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchData()
+
+    if (latitudeLongitude != null) {
+        LaunchedEffect(Unit) {
+            viewModel.fetchDataByLocation(latitudeLongitude)
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            viewModel.fetchData()
+        }
     }
 
+
     Scaffold(
-        topBar = { AppBar(title = stringResource(id = R.string.app_name))},
+        topBar = { AppBar(title = stringResource(id = R.string.app_name)) },
     ) {
         state?.let {
-            CurrentConditionsContent(it) {
-                onForecastButtonClick()
-            }
+            CurrentConditionsContent(it, onGetWeatherForMyLocationClick, onForecastButtonClick)
         }
     }
 
@@ -53,6 +63,7 @@ fun CurrentConditionsScreen(
 @Composable
 fun CurrentConditionsContent(
     currentConditions: CurrentConditions,
+    onGetWeatherForMyLocationClick: () -> Unit,
     onForecastButtonClick: () -> Unit,
 
 
@@ -66,7 +77,7 @@ fun CurrentConditionsContent(
                 .padding(16.dp),
 
 
-            text = stringResource(id = R.string.city_name),
+            text = currentConditions.cityName,
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight(400)
@@ -112,13 +123,16 @@ fun CurrentConditionsContent(
 
 
             Spacer(modifier = Modifier.weight(1.0f, true))
-            val iconUrl = String.format("https://openweathermap.org/img/wn/10d@2x.png",
-            currentConditions.weatherData.firstOrNull()?.iconName)
+            val iconUrl = String.format(
+                "https://openweathermap.org/img/wn/10d@2x.png",
+                currentConditions.weatherData.firstOrNull()?.iconName
+            )
             AsyncImage(
                 model = iconUrl,
                 contentDescription = "Sunny",
                 modifier = Modifier.size(72.dp),
-                contentScale = ContentScale.Fit)
+                contentScale = ContentScale.Fit
+            )
 
         }
 
@@ -175,6 +189,10 @@ fun CurrentConditionsContent(
 
         }
 
+        Button(onClick = onGetWeatherForMyLocationClick) {
+
+            Text(text = "Get Weather for My Location")
+        }
 
     }
 
@@ -190,8 +208,6 @@ fun CurrentConditionsContent(
 )
 @Composable
 fun CurrentConditionsScreenPreview() {
-    CurrentConditionsScreen() {
 
-    }
 
 }
